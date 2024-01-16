@@ -16,10 +16,30 @@ import {
   Typography,
 } from "@mui/material";
 import "./home.css";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Home = ({ allUsers, fromActive }) => {
+  const { id } = useParams();
+
   //   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const navigate = useNavigate();
+
+  const handleUserClick = (user) => {
+    setSelectedUser(user);
+    navigate(`/candidate/${user.id}`);
+  };
+  useEffect(() => {
+    if (id) {
+      const userWithId = allUsers.find((user) => user.id === id);
+
+      if (userWithId) {
+        setSelectedUser(userWithId);
+      } else {
+        console.warn(`User with id ${id} not found`);
+      }
+    }
+  }, [id, allUsers]);
 
   return (
     <div>
@@ -92,9 +112,10 @@ const Home = ({ allUsers, fromActive }) => {
                       selectedUser === user ? "#e09696" : "transparent",
                     "&:hover": {
                       backgroundColor: "#e09696", // Hover effect color
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.5)",
                     },
                   }}
-                  onClick={() => setSelectedUser(user)}
+                  onClick={() => handleUserClick(user)}
                 >
                   <ListItemText primary={user.name} />
                 </ListItem>
@@ -103,6 +124,7 @@ const Home = ({ allUsers, fromActive }) => {
           </Box>
         </Box>
         <Box
+          className="custom-scrollbar"
           sx={{
             backgroundColor: "#FFF5E0",
             //   height: "85vh",
@@ -132,6 +154,13 @@ const Home = ({ allUsers, fromActive }) => {
                 Selected Candidate
               </Box>
               <Box>
+                <Typography
+                  variant="h4"
+                  sx={{ paddingLeft: "20px", marginTop: "10px" }}
+                >
+                  Personal Details:
+                </Typography>
+
                 <Box
                   sx={{
                     display: "flex",
@@ -139,7 +168,13 @@ const Home = ({ allUsers, fromActive }) => {
                     padding: "20px",
                   }}
                 >
-                  <Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Typography variant="h5">
                       Name : {selectedUser.name}
                     </Typography>
@@ -166,8 +201,87 @@ const Home = ({ allUsers, fromActive }) => {
                     />
                   </Box>
                 </Box>
-                <Box>
-                  <Typography>{allUsers?.education}</Typography>
+                <Typography variant="h4" sx={{ paddingLeft: "20px" }}>
+                  Education:
+                </Typography>
+
+                <Box
+                  sx={{
+                    padding: "20px",
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(300px, 1fr))",
+                    gap: "20px",
+                  }}
+                >
+                  {selectedUser?.education?.map((edu, index) => (
+                    <div key={index}>
+                      <div>
+                        <Typography variant="h5">
+                          Name of Institude : {edu.institute}
+                        </Typography>
+                        <Typography variant="h5">
+                          Year of Graduation : {edu.pass_out_year}
+                        </Typography>
+                      </div>
+                    </div>
+                  ))}
+                </Box>
+                <Typography variant="h4" sx={{ paddingLeft: "20px" }}>
+                  Skills:
+                </Typography>
+
+                <Box
+                  sx={{
+                    padding: "20px",
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(300px, 1fr))",
+                    gap: "20px",
+                  }}
+                >
+                  {selectedUser?.skills?.map((skill, index) => (
+                    <div key={index}>
+                      <div>
+                        <Typography variant="h5">
+                          Skill : {skill?.skill}
+                        </Typography>
+                        <Typography variant="h5">
+                          Year of Graduation : {skill?.experience}
+                        </Typography>
+                      </div>
+                    </div>
+                  ))}
+                </Box>
+                <Typography variant="h4" sx={{ paddingLeft: "20px" }}>
+                  Experience:
+                </Typography>
+
+                <Box
+                  sx={{
+                    padding: "20px",
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(300px, 1fr))",
+                    gap: "20px",
+                  }}
+                >
+                  {selectedUser?.experience?.map((exp, index) => (
+                    <div key={index}>
+                      <div>
+                        <Typography variant="h5">
+                          Skill : {exp?.company}
+                        </Typography>
+                        <Typography variant="h5">
+                          Project : {exp?.project}
+                        </Typography>
+                        <Typography variant="h5">Role : {exp?.role}</Typography>
+                        <Typography variant="h5">
+                          Duration from : {exp?.duration_from}
+                        </Typography>
+                      </div>
+                    </div>
+                  ))}
                 </Box>
               </Box>
             </Box>

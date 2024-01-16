@@ -10,6 +10,7 @@ import {
 import {
   Box,
   Button,
+  Grid,
   List,
   ListItem,
   ListItemText,
@@ -17,12 +18,14 @@ import {
 } from "@mui/material";
 import "./home.css";
 import { useNavigate, useParams } from "react-router-dom";
+import ReusableInput from "../../components/InputTag.jsx";
 
 const Home = ({ allUsers, fromActive }) => {
   const { id } = useParams();
 
   //   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [editable, setEditable] = useState(true);
   const navigate = useNavigate();
 
   const handleUserClick = (user) => {
@@ -156,7 +159,11 @@ const Home = ({ allUsers, fromActive }) => {
               <Box>
                 <Typography
                   variant="h4"
-                  sx={{ paddingLeft: "20px", marginTop: "10px" }}
+                  sx={{
+                    paddingLeft: "20px",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
                 >
                   Personal Details:
                 </Typography>
@@ -166,37 +173,78 @@ const Home = ({ allUsers, fromActive }) => {
                     display: "flex",
                     justifyContent: "space-between",
                     padding: "20px",
+                    margin: "10px",
+                    border: "1px solid black",
+                    borderRadius: "10px",
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography variant="h5">
-                      Name : {selectedUser.name}
-                    </Typography>
-                    <Typography variant="h5">
-                      Email : {selectedUser.email}
-                    </Typography>
-                    <Typography variant="h5">
-                      Gender : {selectedUser.gender}
-                    </Typography>
-                    <Typography variant="h5">
-                      Hobbies : {selectedUser.hobbies}
-                    </Typography>
+                  <Box sx={{ width: "70%" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <Grid container spacing={1}>
+                        <Grid item xs={1.5}>
+                          <Typography variant="h5" style={{ display: "flex" }}>
+                            Name:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={10.5}>
+                          <ReusableInput
+                            value={selectedUser.name}
+                            disabled={editable}
+                          />
+                        </Grid>
+                        <Grid item xs={1.5}>
+                          <Typography variant="h5" style={{ display: "flex" }}>
+                            Email:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={10.5}>
+                          <ReusableInput
+                            value={selectedUser.email}
+                            disabled={editable}
+                          />
+                        </Grid>
+                        <Grid item xs={1.5}>
+                          <Typography variant="h5" style={{ display: "flex" }}>
+                            Gender:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={10.5}>
+                          <ReusableInput
+                            value={selectedUser.gender}
+                            disabled={editable}
+                          />
+                        </Grid>
+                        <Grid item xs={1.5}>
+                          <Typography variant="h5" style={{ display: "flex" }}>
+                            Hobbies:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={10.5}>
+                          <ReusableInput
+                            value={selectedUser.hobbies}
+                            disabled={editable}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Box>
                   </Box>
-                  <Box sx={{ width: "150px", height: "150px" }}>
+                  <Box sx={{ width: "30%", height: "150px" }}>
                     <img
                       src={selectedUser.profile_picture}
                       alt={selectedUser.name}
                       style={{
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
+                        objectFit: "contain",
                         borderRadius: "10px",
+                        paddingLeft: "20px",
                       }}
                     />
                   </Box>
@@ -204,84 +252,149 @@ const Home = ({ allUsers, fromActive }) => {
                 <Typography variant="h4" sx={{ paddingLeft: "20px" }}>
                   Education:
                 </Typography>
-
                 <Box
                   sx={{
                     padding: "20px",
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(300px, 1fr))",
-                    gap: "20px",
+                    margin: "10px",
+                    border: "1px solid black",
+                    borderRadius: "10px",
                   }}
                 >
-                  {selectedUser?.education?.map((edu, index) => (
-                    <div key={index}>
-                      <div>
-                        <Typography variant="h5">
-                          Name of Institude : {edu.institute}
-                        </Typography>
-                        <Typography variant="h5">
-                          Year of Graduation : {edu.pass_out_year}
-                        </Typography>
-                      </div>
-                    </div>
-                  ))}
+                  <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                      padding: "20px",
+                    }}
+                  >
+                    {selectedUser?.education?.map((edu, index) => (
+                      <Grid item key={index} xs={12} md={6} lg={4}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <Typography variant="h5">
+                            Name of Institute:
+                          </Typography>
+                          <ReusableInput
+                            value={edu.institute}
+                            disabled={editable}
+                          />
+                        </div>
+                        <div style={{ marginTop: "10px" }}>
+                          <Typography variant="h5">
+                            Year of Graduation:
+                          </Typography>
+                          <ReusableInput
+                            value={edu.pass_out_year}
+                            disabled={editable}
+                          />
+                        </div>
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Box>
+
                 <Typography variant="h4" sx={{ paddingLeft: "20px" }}>
                   Skills:
                 </Typography>
-
                 <Box
                   sx={{
                     padding: "20px",
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(300px, 1fr))",
-                    gap: "20px",
+                    margin: "10px",
+                    border: "1px solid black",
+                    borderRadius: "10px",
                   }}
                 >
-                  {selectedUser?.skills?.map((skill, index) => (
-                    <div key={index}>
-                      <div>
-                        <Typography variant="h5">
-                          Skill : {skill?.skill}
-                        </Typography>
-                        <Typography variant="h5">
-                          Year of Graduation : {skill?.experience}
-                        </Typography>
-                      </div>
-                    </div>
-                  ))}
+                  <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                      padding: "20px",
+                    }}
+                  >
+                    {selectedUser?.skills?.map((skill, index) => (
+                      <Grid item key={index} xs={12} md={6} lg={4}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <Typography variant="h5">Skill :</Typography>
+                          <ReusableInput
+                            value={skill?.skill}
+                            disabled={editable}
+                          />
+
+                          <Typography variant="h5">
+                            Year of Graduation :
+                          </Typography>
+                          <ReusableInput
+                            value={skill?.experience}
+                            disabled={editable}
+                          />
+                        </div>
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Box>
+
                 <Typography variant="h4" sx={{ paddingLeft: "20px" }}>
                   Experience:
                 </Typography>
-
                 <Box
                   sx={{
                     padding: "20px",
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(300px, 1fr))",
-                    gap: "20px",
+                    margin: "10px",
+                    border: "1px solid black",
+                    borderRadius: "10px",
                   }}
                 >
-                  {selectedUser?.experience?.map((exp, index) => (
-                    <div key={index}>
-                      <div>
-                        <Typography variant="h5">
-                          Skill : {exp?.company}
-                        </Typography>
-                        <Typography variant="h5">
-                          Project : {exp?.project}
-                        </Typography>
-                        <Typography variant="h5">Role : {exp?.role}</Typography>
-                        <Typography variant="h5">
-                          Duration from : {exp?.duration_from}
-                        </Typography>
-                      </div>
-                    </div>
-                  ))}
+                  <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                      padding: "20px",
+                    }}
+                  >
+                    {selectedUser?.experience?.map((exp, index) => (
+                      <Grid item key={index} xs={12} md={6} lg={4}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <Typography variant="h5">Skill :</Typography>
+                          <ReusableInput
+                            value={exp?.company}
+                            disabled={editable}
+                          />
+
+                          <Typography variant="h5">Project :</Typography>
+                          <ReusableInput
+                            value={exp?.project}
+                            disabled={editable}
+                          />
+
+                          <Typography variant="h5">Role : </Typography>
+                          <ReusableInput
+                            value={exp?.role}
+                            disabled={editable}
+                          />
+
+                          <Typography variant="h5">Duration from :</Typography>
+                          <ReusableInput
+                            value={exp?.duration_from}
+                            disabled={editable}
+                          />
+                        </div>
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Box>
               </Box>
             </Box>

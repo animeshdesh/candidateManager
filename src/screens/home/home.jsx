@@ -20,17 +20,79 @@ import "./home.css";
 import { useNavigate, useParams } from "react-router-dom";
 import ReusableInput from "../../components/InputTag.jsx";
 
-const Home = ({ allUsers, fromActive }) => {
+const Home = ({ fromActive }) => {
   const { id } = useParams();
 
   //   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editable, setEditable] = useState(true);
+  const [editedUser, setEditedUser] = useState(null);
+  const [allUsers, setAllUsers] = useState([]);
+
   const navigate = useNavigate();
+
+  const getAllUsers = async () => {
+    const response = await getAllCandidates();
+    setAllUsers(response);
+  };
+
+  useEffect(() => {
+    getAllUsers();
+  }, []);
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
     navigate(`/candidate/${user.id}`);
+  };
+  // Function to handle text changes
+  const handleTextChange = (type, value, index, nestedType) => {
+    // Check if the type is related to the nested arrays
+    console.log(type, value, index, nestedType);
+    if (
+      nestedType === "education" ||
+      nestedType === "skills" ||
+      nestedType === "experience"
+    ) {
+      setSelectedUser({
+        ...selectedUser,
+        [nestedType]: selectedUser[nestedType].map((item, i) => {
+          if (i === index) {
+            return {
+              ...item,
+              [type]: value,
+            };
+          }
+          return item;
+        }),
+      });
+    } else {
+      // If it's a top-level property, update directly
+      setSelectedUser({
+        ...selectedUser,
+        [type]: value,
+      });
+    }
+  };
+
+  const handelSavingData = async () => {
+    const response = await updateCandidate(id, selectedUser);
+    if (response) {
+      const updatedUsers = await getAllCandidates();
+      setAllUsers(updatedUsers);
+      setSelectedUser(response);
+      setEditable(false);
+    }
+  };
+  const handelDeleteUser = async () => {
+    const response = await deleteCandidate(selectedUser.id);
+    if (response) {
+      console.log("Deleted Successfully");
+      // Call getAllUsers to update the list of users
+      const updatedUsers = await getAllCandidates();
+      setAllUsers(updatedUsers);
+      // Reset selectedUser to null or perform any other necessary actions
+      setSelectedUser(null);
+    }
   };
   useEffect(() => {
     if (id) {
@@ -148,13 +210,46 @@ const Home = ({ allUsers, fromActive }) => {
                   height: "5vh",
                   borderRadius: "10px",
                   display: "flex",
-                  justifyContent: "start",
+                  justifyContent: "space-between",
                   paddingLeft: "15px",
+                  paddingRight: "15px",
                   alignItems: "center",
                   fontSize: "20px",
                 }}
               >
-                Selected Candidate
+                <Typography sx={{ fontSize: "20px" }}>
+                  Selected Candidate{" "}
+                </Typography>
+                <div style={{ display: "flex", gap: "25px" }}>
+                  {!editable && (
+                    <Button
+                      variant="contained"
+                      sx={{ backgroundColor: "#141E46" }}
+                      onClick={() => {
+                        handelSavingData();
+                        setEditable(true);
+                      }}
+                    >
+                      Save
+                    </Button>
+                  )}
+                  {editable && (
+                    <Button
+                      variant="contained"
+                      sx={{ backgroundColor: "#141E46" }}
+                      onClick={() => setEditable(false)}
+                    >
+                      Edit
+                    </Button>
+                  )}
+                  <Button
+                    variant="contained"
+                    sx={{ backgroundColor: "#141E46" }}
+                    onClick={() => handelDeleteUser()}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </Box>
               <Box>
                 <Typography
@@ -197,6 +292,10 @@ const Home = ({ allUsers, fromActive }) => {
                           <ReusableInput
                             value={selectedUser.name}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange("name", value)
+                            }
+                            type="name"
                           />
                         </Grid>
                         <Grid item xs={1.5}>
@@ -208,6 +307,10 @@ const Home = ({ allUsers, fromActive }) => {
                           <ReusableInput
                             value={selectedUser.email}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange("email", value)
+                            }
+                            type="email"
                           />
                         </Grid>
                         <Grid item xs={1.5}>
@@ -219,6 +322,10 @@ const Home = ({ allUsers, fromActive }) => {
                           <ReusableInput
                             value={selectedUser.gender}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange("gender", value)
+                            }
+                            type="gender"
                           />
                         </Grid>
                         <Grid item xs={1.5}>
@@ -230,6 +337,10 @@ const Home = ({ allUsers, fromActive }) => {
                           <ReusableInput
                             value={selectedUser.hobbies}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange("hobbies", value)
+                            }
+                            type="hobbies"
                           />
                         </Grid>
                       </Grid>
@@ -281,19 +392,38 @@ const Home = ({ allUsers, fromActive }) => {
                           <ReusableInput
                             value={edu.institute}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange(
+                                "institute",
+                                value,
+                                index,
+                                "education"
+                              )
+                            }
+                            type="institute"
                           />
                         </div>
                         <div style={{ marginTop: "10px" }}>
                           <Typography variant="h5">
-                            Year of Graduation:
+                            Year of graduation:
                           </Typography>
                           <ReusableInput
                             value={edu.pass_out_year}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange(
+                                "pass_out_year",
+                                value,
+                                index,
+                                "education"
+                              )
+                            }
+                            type="pass_out_year"
                           />
                         </div>
                       </Grid>
                     ))}
+                    {/* {!editable && ( )} */}
                   </Grid>
                 </Box>
 
@@ -327,6 +457,10 @@ const Home = ({ allUsers, fromActive }) => {
                           <ReusableInput
                             value={skill?.skill}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange("skill", value, index, "skills")
+                            }
+                            type="skill"
                           />
 
                           <Typography variant="h5">
@@ -335,6 +469,15 @@ const Home = ({ allUsers, fromActive }) => {
                           <ReusableInput
                             value={skill?.experience}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange(
+                                "experience",
+                                value,
+                                index,
+                                "skills"
+                              )
+                            }
+                            type="experience"
                           />
                         </div>
                       </Grid>
@@ -368,28 +511,64 @@ const Home = ({ allUsers, fromActive }) => {
                             flexDirection: "column",
                           }}
                         >
-                          <Typography variant="h5">Skill :</Typography>
+                          <Typography variant="h5">Company :</Typography>
                           <ReusableInput
                             value={exp?.company}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange(
+                                "company",
+                                value,
+                                index,
+                                "experience"
+                              )
+                            }
+                            type="company"
                           />
 
                           <Typography variant="h5">Project :</Typography>
                           <ReusableInput
                             value={exp?.project}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange(
+                                "project",
+                                value,
+                                index,
+                                "experience"
+                              )
+                            }
+                            type="project"
                           />
 
                           <Typography variant="h5">Role : </Typography>
                           <ReusableInput
                             value={exp?.role}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange(
+                                "role",
+                                value,
+                                index,
+                                "experience"
+                              )
+                            }
+                            type="role"
                           />
 
                           <Typography variant="h5">Duration from :</Typography>
                           <ReusableInput
                             value={exp?.duration_from}
                             disabled={editable}
+                            onChange={(value) =>
+                              handleTextChange(
+                                "duration_from",
+                                value,
+                                index,
+                                "experience"
+                              )
+                            }
+                            type="duration_from"
                           />
                         </div>
                       </Grid>

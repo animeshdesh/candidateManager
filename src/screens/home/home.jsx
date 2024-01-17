@@ -303,13 +303,24 @@ const Home = ({ fromActive, name }) => {
                   height: "5vh",
                   borderRadius: "10px",
                   display: "flex",
-                  justifyContent: "start",
+                  justifyContent: "space-between",
                   paddingLeft: "15px",
                   alignItems: "center",
                   fontSize: "20px",
                 }}
               >
-                Details of Canditate
+                <Typography sx={{ fontSize: "20px" }}>
+                  Details of Canditate
+                </Typography>
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: "#141E46", marginRight: "25px" }}
+                  onClick={() => {
+                    navigate(`/candidate/new`);
+                  }}
+                >
+                  Add New
+                </Button>
               </Box>
               <Box>
                 {/* Display the list of users */}
@@ -516,6 +527,30 @@ const Home = ({ fromActive, name }) => {
                                 type="hobbies"
                               />
                             </Grid>
+                            {!editable && (
+                              <>
+                                <Grid item xs={1.5}>
+                                  <Typography
+                                    variant="h5"
+                                    style={{ display: "flex" }}
+                                  >
+                                    Profile URL:
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={10.5}>
+                                  <ReusableInput
+                                    disabled={editable}
+                                    value={selectedUser.profile_picture}
+                                    onChange={(value) =>
+                                      setSelectedUser((prevUser) => ({
+                                        ...prevUser,
+                                        profile_picture: value,
+                                      }))
+                                    }
+                                  />
+                                </Grid>
+                              </>
+                            )}
                           </Grid>
                         </Box>
                       </Box>

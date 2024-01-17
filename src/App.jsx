@@ -7,12 +7,10 @@ import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import { getAllCandidates } from "./services/auth.endpoints";
 
 function App() {
-  // Get the id from the current route
   const { id } = useParams();
-  console.log(id);
+
   const [name, setName] = useState("");
-  // Get the id from the current route
-  console.log(name);
+
   return (
     <>
       <div className="container">

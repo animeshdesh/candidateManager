@@ -35,7 +35,7 @@ const Login = (props) => {
           >
             Candidate Manager
           </Typography>
-          <Typography sx={{ fontFamily: "arial", fontSize: "10px" }}>
+          <Typography sx={{ fontFamily: "arial", fontSize: "15px" }}>
             Made with 💖 for NonStop.io
           </Typography>
         </Box>

@@ -168,11 +168,9 @@ const Home = ({ fromActive, name }) => {
   };
   const handleRemoveExperience = () => {
     setSelectedUser((prevUser) => {
-      // Create a copy of the experience array without the last element
       const updatedExperience = [...prevUser.experience];
       updatedExperience.pop(); // Remove the last experience
 
-      // Return the updated user object with the modified experience array
       return {
         ...prevUser,
         experience: updatedExperience,
@@ -225,7 +223,7 @@ const Home = ({ fromActive, name }) => {
             duration_to: "",
           },
         ],
-        id: `${newUserId}`, // Set to an empty string for new candidates
+        id: `${newUserId}`,
         company: "",
       });
       setEditable(false);
@@ -455,7 +453,7 @@ const Home = ({ fromActive, name }) => {
                           }}
                         >
                           <Grid container spacing={1}>
-                            <Grid item xs={1.5}>
+                            <Grid item xs={2}>
                               <Typography
                                 variant="h5"
                                 style={{ display: "flex" }}
@@ -463,7 +461,7 @@ const Home = ({ fromActive, name }) => {
                                 Name:
                               </Typography>
                             </Grid>
-                            <Grid item xs={10.5}>
+                            <Grid item xs={10}>
                               <ReusableInput
                                 value={selectedUser.name}
                                 disabled={editable}
@@ -473,7 +471,7 @@ const Home = ({ fromActive, name }) => {
                                 type="name"
                               />
                             </Grid>
-                            <Grid item xs={1.5}>
+                            <Grid item xs={2}>
                               <Typography
                                 variant="h5"
                                 style={{ display: "flex" }}
@@ -481,7 +479,7 @@ const Home = ({ fromActive, name }) => {
                                 Email:
                               </Typography>
                             </Grid>
-                            <Grid item xs={10.5}>
+                            <Grid item xs={10}>
                               <ReusableInput
                                 value={selectedUser.email}
                                 disabled={editable}
@@ -491,7 +489,7 @@ const Home = ({ fromActive, name }) => {
                                 type="email"
                               />
                             </Grid>
-                            <Grid item xs={1.5}>
+                            <Grid item xs={2}>
                               <Typography
                                 variant="h5"
                                 style={{ display: "flex" }}
@@ -499,7 +497,7 @@ const Home = ({ fromActive, name }) => {
                                 Gender:
                               </Typography>
                             </Grid>
-                            <Grid item xs={10.5}>
+                            <Grid item xs={10}>
                               <ReusableInput
                                 value={selectedUser.gender}
                                 disabled={editable}
@@ -509,7 +507,7 @@ const Home = ({ fromActive, name }) => {
                                 type="gender"
                               />
                             </Grid>
-                            <Grid item xs={1.5}>
+                            <Grid item xs={2}>
                               <Typography
                                 variant="h5"
                                 style={{ display: "flex" }}
@@ -517,7 +515,7 @@ const Home = ({ fromActive, name }) => {
                                 Hobbies:
                               </Typography>
                             </Grid>
-                            <Grid item xs={10.5}>
+                            <Grid item xs={10}>
                               <ReusableInput
                                 value={selectedUser.hobbies}
                                 disabled={editable}
@@ -529,7 +527,7 @@ const Home = ({ fromActive, name }) => {
                             </Grid>
                             {!editable && (
                               <>
-                                <Grid item xs={1.5}>
+                                <Grid item xs={2}>
                                   <Typography
                                     variant="h5"
                                     style={{ display: "flex" }}
@@ -537,7 +535,7 @@ const Home = ({ fromActive, name }) => {
                                     Profile URL:
                                   </Typography>
                                 </Grid>
-                                <Grid item xs={10.5}>
+                                <Grid item xs={10}>
                                   <ReusableInput
                                     disabled={editable}
                                     value={selectedUser.profile_picture}

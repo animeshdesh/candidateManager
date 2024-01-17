@@ -14,12 +14,14 @@ import {
   List,
   ListItem,
   ListItemText,
+  Snackbar,
   Typography,
 } from "@mui/material";
 import "./home.css";
 import { useNavigate, useParams } from "react-router-dom";
 import ReusableInput from "../../components/InputTag.jsx";
 import Loading from "../../components/Loading.jsx";
+import AutoCloseSnackbar from "../../components/Snackbar.jsx";
 
 const Home = ({ fromActive, name }) => {
   const { id } = useParams();
@@ -28,8 +30,9 @@ const Home = ({ fromActive, name }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [editable, setEditable] = useState(true);
   const [LoadingComp, setLoadingComp] = useState(true);
-  const [editedUser, setEditedUser] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
+  const [snackbarTrigger, setSnackbarTrigger] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("Custom Message");
 
   const navigate = useNavigate();
 
@@ -37,6 +40,8 @@ const Home = ({ fromActive, name }) => {
     const response = await getAllCandidates();
     setAllUsers(response);
     setLoadingComp(false);
+    setSnackbarMessage("Users loaded Successfully");
+    setSnackbarTrigger(true);
   };
 
   useEffect(() => {
@@ -75,6 +80,7 @@ const Home = ({ fromActive, name }) => {
   };
 
   const handelSavingData = async () => {
+    setSnackbarTrigger(false);
     if (fromActive) {
       const response = await createCandidate(selectedUser);
       if (response) {
@@ -82,23 +88,31 @@ const Home = ({ fromActive, name }) => {
         setAllUsers(updatedUsers);
         setSelectedUser(response);
         navigate(`/candidate/${response.id}`);
+        setSnackbarMessage("User Updated Successfully");
+        setSnackbarTrigger(true);
       }
     } else {
       const response = await updateCandidate(id, selectedUser);
       if (response) {
+        setSnackbarTrigger(false);
         const updatedUsers = await getAllCandidates();
         setAllUsers(updatedUsers);
         setSelectedUser(response);
+        setSnackbarMessage("User Updated Successfully");
+        setSnackbarTrigger(true);
       }
     }
   };
   const handelDeleteUser = async () => {
     const response = await deleteCandidate(selectedUser.id);
     if (response) {
+      setSnackbarTrigger(false);
       console.log("Deleted Successfully");
       const updatedUsers = await getAllCandidates();
       setAllUsers(updatedUsers);
       setSelectedUser(null);
+      setSnackbarMessage("User Deleted Successfully");
+      setSnackbarTrigger(true);
     }
   };
   const handleAddSkill = () => {
@@ -232,6 +246,11 @@ const Home = ({ fromActive, name }) => {
 
   return (
     <div>
+      <AutoCloseSnackbar
+        trigger={snackbarTrigger}
+        message={snackbarMessage}
+      ></AutoCloseSnackbar>
+
       {LoadingComp ? (
         <>
           <Box
@@ -294,7 +313,6 @@ const Home = ({ fromActive, name }) => {
             >
               <Box
                 sx={{
-                  padding: "5px 0px 5px 0px",
                   backgroundColor: "#BB2525",
                   color: "white",
                   width: "98%",
@@ -302,7 +320,7 @@ const Home = ({ fromActive, name }) => {
                   borderRadius: "10px",
                   display: "flex",
                   justifyContent: "space-between",
-                  paddingLeft: "15px",
+                  padding: "15px",
                   alignItems: "center",
                   fontSize: "20px",
                 }}
@@ -373,7 +391,6 @@ const Home = ({ fromActive, name }) => {
                 <Box>
                   <Box
                     sx={{
-                      padding: "5px 0px 5px 0px",
                       backgroundColor: "#BB2525",
                       color: "white",
                       width: "98%",
@@ -381,8 +398,7 @@ const Home = ({ fromActive, name }) => {
                       borderRadius: "10px",
                       display: "flex",
                       justifyContent: "space-between",
-                      paddingLeft: "15px",
-                      paddingRight: "15px",
+                      padding: "15px",
                       alignItems: "center",
                       fontSize: "20px",
                     }}
@@ -552,16 +568,23 @@ const Home = ({ fromActive, name }) => {
                           </Grid>
                         </Box>
                       </Box>
-                      <Box sx={{ width: "30%", height: "150px" }}>
+                      <Box
+                        sx={{
+                          width: "30%",
+                          height: "250px",
+                          border: "1px solid black",
+                          borderRadius: "10px",
+                        }}
+                      >
                         <img
                           src={selectedUser.profile_picture}
                           alt={selectedUser.name}
                           style={{
                             width: "100%",
                             height: "100%",
-                            objectFit: "contain",
+                            objectFit: "cover",
                             borderRadius: "10px",
-                            paddingLeft: "20px",
+                            marginRight: "20px",
                           }}
                         />
                       </Box>
@@ -634,8 +657,8 @@ const Home = ({ fromActive, name }) => {
                             sx={{
                               display: "flex",
                               flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
+                              width: "250px",
+                              margin: "15px",
                             }}
                           >
                             <Button
@@ -643,7 +666,7 @@ const Home = ({ fromActive, name }) => {
                               sx={{
                                 backgroundColor: "#141E46",
                                 height: "35px",
-                                margin: "35px",
+                                margin: "15px",
                               }}
                               onClick={handleAddEducation}
                             >
@@ -652,9 +675,11 @@ const Home = ({ fromActive, name }) => {
                             <Button
                               variant="contained"
                               sx={{
-                                backgroundColor: "#141E46",
+                                backgroundColor: "#BB2525",
                                 height: "35px",
-                                margin: "35px",
+                                margin: "15px",
+
+                                "&:hover": { backgroundColor: "none" },
                               }}
                               onClick={handleRemoveEducation}
                             >
@@ -731,8 +756,8 @@ const Home = ({ fromActive, name }) => {
                             sx={{
                               display: "flex",
                               flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
+                              width: "250px",
+                              margin: "15px",
                             }}
                           >
                             <Button
@@ -740,7 +765,7 @@ const Home = ({ fromActive, name }) => {
                               sx={{
                                 backgroundColor: "#141E46",
                                 height: "35px",
-                                margin: "35px",
+                                margin: "15px",
                               }}
                               onClick={handleAddSkill}
                             >
@@ -751,7 +776,7 @@ const Home = ({ fromActive, name }) => {
                               sx={{
                                 backgroundColor: "#141E46",
                                 height: "35px",
-                                margin: "35px",
+                                margin: "15px",
                               }}
                               onClick={handleRemoveSkill}
                             >
@@ -857,8 +882,8 @@ const Home = ({ fromActive, name }) => {
                             sx={{
                               display: "flex",
                               flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
+                              width: "250px",
+                              margin: "15px",
                             }}
                           >
                             <Button
@@ -866,7 +891,7 @@ const Home = ({ fromActive, name }) => {
                               sx={{
                                 backgroundColor: "#141E46",
                                 height: "35px",
-                                margin: "35px",
+                                margin: "15px",
                               }}
                               onClick={handleAddExperience}
                             >
@@ -877,7 +902,7 @@ const Home = ({ fromActive, name }) => {
                               sx={{
                                 backgroundColor: "#141E46",
                                 height: "35px",
-                                margin: "35px",
+                                margin: "15px",
                               }}
                               onClick={handleRemoveExperience}
                             >

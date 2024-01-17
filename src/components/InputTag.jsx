@@ -20,9 +20,9 @@ const ReusableInput = ({
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         style={{
-          border: "1px solid #ccc", // Add your desired border styles
-          borderRadius: "4px", // Add your desired border-radius
-          padding: "8px", // Add your desired padding
+          border: "1px solid black", // Add your desired border styles
+          borderRadius: "6px", // Add your desired border-radius
+          padding: "10px", // Add your desired padding
           outline: "none",
           backgroundColor: "#FFF5E0",
           fontSize: "18px",

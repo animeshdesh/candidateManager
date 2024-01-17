@@ -10,20 +10,21 @@ function App() {
   // Get the id from the current route
   const { id } = useParams();
   console.log(id);
-
+  const [name, setName] = useState("");
   // Get the id from the current route
-
+  console.log(name);
   return (
     <>
       <div className="container">
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Login />} />
-          </Routes>
-          <Routes>
-            <Route path="/candidate" element={<Home />} />
-            <Route path="/candidate/:id" element={<Home />} />
-            <Route path="/candidate/new" element={<Home fromActive={true} />} />
+            <Route path="/" element={<Login setName={setName} name={name} />} />
+            <Route path="/candidate" element={<Home name={name} />} />
+            <Route path="/candidate/:id" element={<Home name={name} />} />
+            <Route
+              path="/candidate/new"
+              element={<Home fromActive={true} name={name} />}
+            />
           </Routes>
         </BrowserRouter>
       </div>

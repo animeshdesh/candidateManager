@@ -20,7 +20,7 @@ import "./home.css";
 import { useNavigate, useParams } from "react-router-dom";
 import ReusableInput from "../../components/InputTag.jsx";
 
-const Home = ({ fromActive }) => {
+const Home = ({ fromActive, name }) => {
   const { id } = useParams();
 
   //   const [allUsers, setAllUsers] = useState([]);
@@ -44,10 +44,8 @@ const Home = ({ fromActive }) => {
     setSelectedUser(user);
     navigate(`/candidate/${user.id}`);
   };
-  // Function to handle text changes
+
   const handleTextChange = (type, value, index, nestedType) => {
-    // Check if the type is related to the nested arrays
-    console.log(type, value, index, nestedType);
     if (
       nestedType === "education" ||
       nestedType === "skills" ||
@@ -66,7 +64,6 @@ const Home = ({ fromActive }) => {
         }),
       });
     } else {
-      // If it's a top-level property, update directly
       setSelectedUser({
         ...selectedUser,
         [type]: value,
@@ -75,34 +72,106 @@ const Home = ({ fromActive }) => {
   };
 
   const handelSavingData = async () => {
-    const response = await updateCandidate(id, selectedUser);
-    if (response) {
-      const updatedUsers = await getAllCandidates();
-      setAllUsers(updatedUsers);
-      setSelectedUser(response);
-      setEditable(false);
+    if (fromActive) {
+      const response = await createCandidate(selectedUser);
+      if (response) {
+        const updatedUsers = await getAllCandidates();
+        setAllUsers(updatedUsers);
+        setSelectedUser(response);
+        navigate(`/candidate/${response.id}`);
+      }
+    } else {
+      const response = await updateCandidate(id, selectedUser);
+      if (response) {
+        const updatedUsers = await getAllCandidates();
+        setAllUsers(updatedUsers);
+        setSelectedUser(response);
+      }
     }
   };
   const handelDeleteUser = async () => {
     const response = await deleteCandidate(selectedUser.id);
     if (response) {
       console.log("Deleted Successfully");
-      // Call getAllUsers to update the list of users
       const updatedUsers = await getAllCandidates();
       setAllUsers(updatedUsers);
-      // Reset selectedUser to null or perform any other necessary actions
       setSelectedUser(null);
     }
+  };
+  const handleAddSkill = () => {
+    const newSkill = {
+      name: "",
+      experience: 0,
+    };
+
+    setSelectedUser((prevUser) => ({
+      ...prevUser,
+      skills: [...prevUser.skills, newSkill],
+    }));
+  };
+  const handleAddEducation = () => {
+    const newEducation = {
+      institute: "",
+      degree: "",
+      percentage: 0,
+      pass_out_year: "",
+    };
+
+    setSelectedUser((prevUser) => ({
+      ...prevUser,
+      education: [...prevUser.education, newEducation],
+    }));
   };
   useEffect(() => {
     if (id) {
       const userWithId = allUsers.find((user) => user.id === id);
-
       if (userWithId) {
         setSelectedUser(userWithId);
+        console.log(userWithId);
       } else {
         console.warn(`User with id ${id} not found`);
       }
+    }
+    if (fromActive) {
+      const lastUserId =
+        allUsers.length > 0 ? allUsers[allUsers.length - 1].id : 0;
+      const newUserId = lastUserId + 1;
+      setSelectedUser({
+        profile_picture: "",
+        name: "",
+        address: "",
+        phone: "",
+        email: "",
+        gender: "",
+        hobbies: [],
+        education: [
+          {
+            institute: "",
+            degree: "",
+            percentage: 0,
+            pass_out_year: "",
+          },
+        ],
+        skills: [
+          {
+            name: "",
+            experience: 0,
+          },
+        ],
+        experience: [
+          {
+            company: "",
+            project: "",
+            role: "",
+            team_size: 0,
+            duration_from: "",
+            duration_to: "",
+          },
+        ],
+        id: `${newUserId}`, // Set to an empty string for new candidates
+        company: "",
+      });
+      setEditable(false);
     }
   }, [id, allUsers]);
 
@@ -115,7 +184,7 @@ const Home = ({ fromActive }) => {
           marginBottom: "0.5rem",
           borderRadius: "10px",
           display: "flex",
-          justifyContent: "start",
+          justifyContent: "space-between",
           paddingLeft: "15px",
           color: "white",
           alignItems: "center",
@@ -123,6 +192,7 @@ const Home = ({ fromActive }) => {
         }}
       >
         Candidate Manager
+        {name ? `${name}` : ""}
       </Box>
       <Box
         sx={{
@@ -199,6 +269,19 @@ const Home = ({ fromActive }) => {
             maxHeight: "85vh",
           }}
         >
+          {!selectedUser && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              <Typography>Select the candidate</Typography>
+            </Box>
+          )}
           {selectedUser && (
             <Box>
               <Box
@@ -423,13 +506,26 @@ const Home = ({ fromActive }) => {
                         </div>
                       </Grid>
                     ))}
-                    {/* {!editable && ( )} */}
+                    {!editable && selectedUser?.education?.length < 10 && (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#141E46",
+                          height: "35px",
+                          margin: "35px",
+                        }}
+                        onClick={handleAddEducation}
+                      >
+                        Add Education
+                      </Button>
+                    )}
                   </Grid>
                 </Box>
 
                 <Typography variant="h4" sx={{ paddingLeft: "20px" }}>
                   Skills:
                 </Typography>
+
                 <Box
                   sx={{
                     padding: "20px",
@@ -482,6 +578,19 @@ const Home = ({ fromActive }) => {
                         </div>
                       </Grid>
                     ))}
+                    {!editable && selectedUser?.skills?.length < 10 && (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#141E46",
+                          height: "35px",
+                          margin: "35px",
+                        }}
+                        onClick={handleAddSkill}
+                      >
+                        Add Skill
+                      </Button>
+                    )}
                   </Grid>
                 </Box>
 
@@ -573,6 +682,19 @@ const Home = ({ fromActive }) => {
                         </div>
                       </Grid>
                     ))}
+                    {!editable && selectedUser?.experience?.length < 10 && (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "#141E46",
+                          height: "35px",
+                          margin: "35px",
+                        }}
+                        onClick={handleAddSkill}
+                      >
+                        Add Experience
+                      </Button>
+                    )}
                   </Grid>
                 </Box>
               </Box>
